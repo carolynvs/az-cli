@@ -1,0 +1,12 @@
+[[constraint]]
+  name = "github.com/Azure/azure-storage-blob-go"
+  version = "0.1.3"
+
+[[constraint]]
+  name="github.com/spf13/cobra"
+  revision="f62e98d28ab7ad31d707ba837a966378465c7b57"
+
+[prune]
+  go-tests = true
+  unused-packages = true
+  non-go = true
