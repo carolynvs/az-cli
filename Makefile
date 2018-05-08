@@ -1,7 +1,38 @@
+PKG ?= github.com/carolynvs/az-cli
 GOPATH ?= $(shell go env GOPATH)
+GOOS ?= $(shell go env GOOS)
+GOARCH ?= $(shell go env GOARCH)
+VERSION ?= $(shell git describe --tags --abbrev=7 --dirty 2> /dev/null || echo v0.0.0)
+
+ALL_GOOS = darwin linux windows
+
+ifeq ($(GOOS),windows)
+FILE_EXT=.exe
+else
+FILE_EXT=
+endif
 
 build:
-	go build -o az .
+	$(MAKE) build-for-$(GOOS)
+	cp bin/$(VERSION)/$(GOOS)/$(GOARCH)/az$(FILE_EXT) bin/
+
+build-all: $(addprefix build-for-,$(ALL_GOOS))
+build-for-%:
+	$(MAKE) GOOS=$* GOARCH=$(GOARCH) VERSION=$(VERSION) xbuild
+
+xbuild:
+	mkdir -p bin/
+	CGO_ENABLED=0 GOOS=$(GOOS) GOARCH=$(GOARCH) \
+		go build -a -tags netgo -installsuffix netgo \
+		-ldflags '-X $(PKG)/pkg.Version=$(VERSION)' \
+		-o bin/$(VERSION)/$(GOOS)/$(GOARCH)/az$(FILE_EXT) .
+
+clean:
+	-rm -r bin/
 
 install: build
-	cp az ${GOPATH}/bin/
+	cp bin/az$(FILE_EXT) $(GOPATH)/bin/
+
+.PHONY: test
+test: build
+	./test/test.sh
