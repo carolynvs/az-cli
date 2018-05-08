@@ -31,6 +31,11 @@ func NewRootCommand() *RootCommand {
 			// Enable tests to swap the output
 			cxt.Output = cmd.OutOrStdout()
 
+			// Don't initialize or validate anything for the --version flag
+			if c.Version {
+				return nil
+			}
+
 			app, err := az.NewApp()
 			if err != nil {
 				return err

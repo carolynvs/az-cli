@@ -39,6 +39,10 @@ func (a *App) UploadBatch(sourceDirectory, containerName string) error {
 	}
 
 	err = filepath.Walk(sourceDirectory, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
 		if info.IsDir() {
 			return nil
 		}
@@ -46,10 +50,10 @@ func (a *App) UploadBatch(sourceDirectory, containerName string) error {
 		return nil
 	})
 	close(files)
-
+	
 	wg.Wait()
 
-	return nil
+	return err
 }
 
 func (a *App) uploadFile(path string, containerURL azblob.ContainerURL) error {
