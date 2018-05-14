@@ -2,11 +2,12 @@ package az
 
 import (
 	"context"
-	"errors"
 	"os"
+	"regexp"
 
 	"github.com/Azure/azure-pipeline-go/pipeline"
 	"github.com/Azure/azure-storage-blob-go/2017-07-29/azblob"
+	"github.com/pkg/errors"
 )
 
 type App struct {
@@ -24,10 +25,24 @@ func NewApp() (*App, error) {
 }
 
 func (a *App) loadCredentials() error {
-	// From the Azure portal, get your storage account name and key and set environment variables.
-	accountName, accountKey := os.Getenv("AZURE_STORAGE_ACCOUNT"), os.Getenv("AZURE_STORAGE_ACCESS_KEY")
+	accountName := os.Getenv("AZURE_STORAGE_ACCOUNT")
+	accountKey := os.Getenv("AZURE_STORAGE_ACCESS_KEY")
+
 	if accountName == "" || accountKey == "" {
-		return errors.New("AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_ACCESS_KEY must be set")
+		connString := os.Getenv("AZURE_STORAGE_CONNECTION_STRING")
+
+		keyRegex := regexp.MustCompile("AccountKey=([^;]+);")
+		keyMatch := keyRegex.FindAllStringSubmatch(connString, -1)
+
+		nameRegex := regexp.MustCompile("AccountName=([^;]+);")
+		nameMatch := nameRegex.FindAllStringSubmatch(connString, -1)
+
+		if len(nameMatch) == 0 || len(keyMatch) == 0 {
+			return errors.New("AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_ACCESS_KEY or AZURE_STORAGE_CONNECTION_STRING must be set")
+		}
+
+		accountKey=keyMatch[0][1]
+		accountName=nameMatch[0][1]
 	}
 
 	a.Credential = azblob.NewSharedKeyCredential(accountName, accountKey)
