@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
 
 	"github.com/Azure/azure-storage-blob-go/2017-07-29/azblob"
@@ -29,7 +30,9 @@ func (a *App) UploadBatch(sourceDirectory, containerName string) error {
 		wg.Add(1)
 		go func() {
 			for path := range files {
-				err := a.uploadFile(path, containerURL)
+				name := strings.Replace(path, sourceDirectory, "", 1)
+				name = strings.TrimLeft(name, string(os.PathSeparator))
+				err := a.uploadFile(path, name, containerURL)
 				if err != nil {
 					log.Print(err)
 				}
@@ -56,8 +59,8 @@ func (a *App) UploadBatch(sourceDirectory, containerName string) error {
 	return err
 }
 
-func (a *App) uploadFile(path string, containerURL azblob.ContainerURL) error {
-	blobURL := containerURL.NewBlockBlobURL(path)
+func (a *App) uploadFile(path, name string, containerURL azblob.ContainerURL) error {
+	blobURL := containerURL.NewBlockBlobURL(name)
 	file, err := os.Open(path)
 	if err != nil {
 		return errors.Wrapf(err, "skipping file upload, could not open %s", path)
@@ -67,7 +70,7 @@ func (a *App) uploadFile(path string, containerURL azblob.ContainerURL) error {
 	_, err = azblob.UploadFileToBlockBlob(a.cxt, file, blobURL, azblob.UploadToBlockBlobOptions{
 		BlockSize:   4 * 1024 * 1024,
 		Parallelism: 16})
-	fmt.Printf("uploaded %s\n", path)
+	fmt.Printf("uploaded %s to %s\n", path, blobURL)
 
 	return err
 }
