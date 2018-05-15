@@ -5,7 +5,7 @@ go_import_path: github.com/carolynvs/az-cli
 sudo: required
 services:
   - docker
-script: make build-all
+script: make build-all test
 deploy:
   provider: releases
   api_key: "$GITHUB_TOKEN"
