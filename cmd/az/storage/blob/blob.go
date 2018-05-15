@@ -21,6 +21,7 @@ func NewSubCommand(cxt *command.Context) *SubCommand {
 
 	c.AddCommand(
 		NewUploadBatchCommand(cxt).Command,
+		NewDownloadCommand(cxt).Command,
 	)
 
 	return c

@@ -41,8 +41,8 @@ func (a *App) loadCredentials() error {
 			return errors.New("AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_ACCESS_KEY or AZURE_STORAGE_CONNECTION_STRING must be set")
 		}
 
-		accountKey=keyMatch[0][1]
-		accountName=nameMatch[0][1]
+		accountKey = keyMatch[0][1]
+		accountName = nameMatch[0][1]
 	}
 
 	a.Credential = azblob.NewSharedKeyCredential(accountName, accountKey)

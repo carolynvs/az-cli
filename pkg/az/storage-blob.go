@@ -53,7 +53,7 @@ func (a *App) UploadBatch(sourceDirectory, containerName string) error {
 		return nil
 	})
 	close(files)
-	
+
 	wg.Wait()
 
 	return err
@@ -73,4 +73,21 @@ func (a *App) uploadFile(path, name string, containerURL azblob.ContainerURL) er
 	fmt.Printf("uploaded %s to %s\n", path, blobURL)
 
 	return err
+}
+
+func (a *App) DownloadBlob(containerName, blobName, destination string) error {
+	rawURL := fmt.Sprintf("https://%s.blob.core.windows.net/%s", a.Credential.AccountName(), containerName)
+	URL, err := url.Parse(rawURL)
+	if err != nil {
+		return errors.Wrapf(err, "could not parse container URL %s", rawURL)
+	}
+	containerURL := azblob.NewContainerURL(*URL, a.Pipeline)
+	blobURL := containerURL.NewBlobURL(blobName)
+
+	file, err := os.Create(destination)
+	if err != nil {
+		return errors.Wrapf(err, "cannot write to %s", destination)
+	}
+
+	return azblob.DownloadBlobToFile(a.cxt, blobURL, 0, 0, azblob.BlobAccessConditions{}, file, azblob.DownloadFromBlobOptions{})
 }

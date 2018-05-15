@@ -1,4 +1,7 @@
 # Azure Go CLI
+
+[![Build Status](https://travis-ci.org/carolynvs/az-cli.svg?branch=master)](https://travis-ci.org/carolynvs/az-cli)
+
 This is a subset of the python Azure CLI, az, implemented in Go. The purpose
 is to make it easier to install and use the Azure CLI in environments that don't
 already have python installed (namely my CI build images).
@@ -53,3 +56,4 @@ Authentication is performed using the `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE
 
 * `az --version`
 * `az storage blob upload-batch --source --destination`
+* `az storage blob download --container-name --name --file`
