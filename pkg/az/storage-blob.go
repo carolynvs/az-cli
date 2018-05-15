@@ -15,12 +15,10 @@ import (
 )
 
 func (a *App) UploadBatch(sourceDirectory, containerName string) error {
-	rawURL := fmt.Sprintf("https://%s.blob.core.windows.net/%s", a.Credential.AccountName(), containerName)
-	URL, err := url.Parse(rawURL)
+	containerURL, err := a.buildContainerURL(containerName)
 	if err != nil {
-		return errors.Wrapf(err, "could not parse container URL %s", rawURL)
+		return err
 	}
-	containerURL := azblob.NewContainerURL(*URL, a.Pipeline)
 
 	numCores := runtime.GOMAXPROCS(0)
 	files := make(chan string, 10*numCores)
@@ -76,12 +74,10 @@ func (a *App) uploadFile(path, name string, containerURL azblob.ContainerURL) er
 }
 
 func (a *App) DownloadBlob(containerName, blobName, destination string) error {
-	rawURL := fmt.Sprintf("https://%s.blob.core.windows.net/%s", a.Credential.AccountName(), containerName)
-	URL, err := url.Parse(rawURL)
+	containerURL, err := a.buildContainerURL(containerName)
 	if err != nil {
-		return errors.Wrapf(err, "could not parse container URL %s", rawURL)
+		return err
 	}
-	containerURL := azblob.NewContainerURL(*URL, a.Pipeline)
 	blobURL := containerURL.NewBlobURL(blobName)
 
 	file, err := os.Create(destination)
@@ -90,4 +86,14 @@ func (a *App) DownloadBlob(containerName, blobName, destination string) error {
 	}
 
 	return azblob.DownloadBlobToFile(a.cxt, blobURL, 0, 0, azblob.BlobAccessConditions{}, file, azblob.DownloadFromBlobOptions{})
+}
+
+func (a *App) buildContainerURL(containerName string) (azblob.ContainerURL, error) {
+	rawURL := fmt.Sprintf("https://%s.blob.core.windows.net/%s", a.Credential.AccountName(), containerName)
+	URL, err := url.Parse(rawURL)
+	if err != nil {
+		return azblob.ContainerURL{}, errors.Wrapf(err, "could not parse container URL %s", rawURL)
+	}
+
+	return azblob.NewContainerURL(*URL, a.Pipeline), nil
 }

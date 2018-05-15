@@ -57,3 +57,5 @@ Authentication is performed using the `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE
 * `az --version`
 * `az storage blob upload-batch --source --destination`
 * `az storage blob download --container-name --name --file`
+* `az storage container lease acquire -c -d`
+* `az storage blob lease acquire -c -b -d`

@@ -2,6 +2,7 @@ package blob
 
 import (
 	"github.com/carolynvs/az-cli/cmd/az/command"
+	"github.com/carolynvs/az-cli/cmd/az/storage/blob/lease"
 	"github.com/spf13/cobra"
 )
 
@@ -20,6 +21,7 @@ func NewSubCommand(cxt *command.Context) *SubCommand {
 	}
 
 	c.AddCommand(
+		lease.NewSubCommand(cxt).Command,
 		NewUploadBatchCommand(cxt).Command,
 		NewDownloadCommand(cxt).Command,
 	)
