@@ -45,5 +45,5 @@ func (c *UploadBatchCommand) Run() error {
 }
 
 func (c *UploadBatchCommand) UploadBatch() error {
-	return c.App.UploadBatch(c.Source, c.Destination)
+	return c.App.UploadBlobBatch(c.Source, c.Destination)
 }

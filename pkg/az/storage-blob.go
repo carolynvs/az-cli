@@ -14,7 +14,16 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (a *App) UploadBatch(sourceDirectory, containerName string) error {
+func (a *App) UploadBlob(containerName, blobName, source string) error {
+	containerURL, err := a.buildContainerURL(containerName)
+	if err != nil {
+		return err
+	}
+
+	return a.uploadFile(source, blobName, containerURL)
+}
+
+func (a *App) UploadBlobBatch(sourceDirectory, containerName string) error {
 	containerURL, err := a.buildContainerURL(containerName)
 	if err != nil {
 		return err

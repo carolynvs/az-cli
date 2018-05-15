@@ -22,6 +22,7 @@ func NewSubCommand(cxt *command.Context) *SubCommand {
 
 	c.AddCommand(
 		lease.NewSubCommand(cxt).Command,
+		NewUploadCommand(cxt).Command,
 		NewUploadBatchCommand(cxt).Command,
 		NewDownloadCommand(cxt).Command,
 	)

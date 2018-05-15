@@ -5,6 +5,9 @@ set -euo pipefail
 REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 AZ=${AZ:-az}
 
+echo "TEST: UploadBlob"
+$REPO_ROOT/bin/$AZ storage blob upload -f test/testdata/a.txt -c azcli -n a.txt
+
 echo "TEST: UploadBatch"
 $REPO_ROOT/bin/$AZ storage blob upload-batch -s test/testdata -d azcli
 
