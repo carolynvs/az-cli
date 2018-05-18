@@ -1,5 +1,3 @@
-# Azure Go CLI
-
 [![Build Status](https://travis-ci.org/carolynvs/az-cli.svg?branch=master)](https://travis-ci.org/carolynvs/az-cli)
 
 This is a subset of the python Azure CLI, az, implemented in Go. The purpose
@@ -7,8 +5,7 @@ is to make it easier to install and use the Azure CLI in environments that don't
 already have python installed (namely my CI build images).
 
 I have only implemented/tested just enough to make this a useful tool for my own
-purposes but would love it if the Azure team was interested in adopting it and
-implementing the full set of commands.
+purposes.
 
 If there are az commands that you require, pull requests are welcome but
 feature requests will be closed.
@@ -52,7 +49,7 @@ $env:PATH += ";~\bin"
 
 # Supported Commands
 
-Authentication is performed using the `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE_ACCESS_KEY` environment variables.
+Authentication is performed using the `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE_ACCESS_KEY`, or `AZURE_STORAGE_CONNECTION_STRING` environment variables.
 
 * `az --version`
 * `az storage blob upload-batch --source --destination`
