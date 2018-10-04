@@ -8,8 +8,13 @@ AZ=${AZ:-az}
 echo "TEST: UploadBlob"
 $REPO_ROOT/bin/$AZ storage blob upload -f test/testdata/a.txt -c azcli -n a.txt
 
-echo "TEST: UploadBatch"
+echo "TEST: UploadBatch from reldir"
 $REPO_ROOT/bin/$AZ storage blob upload-batch -s test/testdata -d azcli
+
+echo "TEST: UploadBatch from curdir"
+pushd test/testdata
+$REPO_ROOT/bin/$AZ storage blob upload-batch -s . -d azcli
+popd
 
 echo "TEST: DownloadBlob"
 $REPO_ROOT/bin/$AZ storage blob download --container-name azcli --name a.txt --file test/testdata/a.txt

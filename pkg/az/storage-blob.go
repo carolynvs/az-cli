@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 	"sync"
 
 	"github.com/Azure/azure-storage-blob-go/2017-07-29/azblob"
@@ -37,9 +36,12 @@ func (a *App) UploadBlobBatch(sourceDirectory, containerName string) error {
 		wg.Add(1)
 		go func() {
 			for path := range files {
-				name := strings.Replace(path, sourceDirectory, "", 1)
-				name = strings.TrimLeft(name, string(os.PathSeparator))
-				err := a.uploadFile(path, name, containerURL)
+				name, err := filepath.Rel(sourceDirectory, path)
+				if err != nil {
+					log.Printf("skipping %q: %s", path, err)
+				}
+
+				err = a.uploadFile(path, name, containerURL)
 				if err != nil {
 					log.Print(err)
 				}
