@@ -11,11 +11,13 @@ If there are az commands that you require, pull requests are welcome but
 feature requests will be closed.
 
 # Install
+Replace `VERSION` in the URLs below with a [released
+version](https://github.com/carolynvs/az-cli/releases), for example `v0.3.2`.
 
 ## Mac
 
 ```
-curl -sLO https://github.com/carolynvs/az-cli/releases/download/latest/az-darwin-amd64
+curl -sLO https://github.com/carolynvs/az-cli/releases/download/VERSION/az-darwin-amd64
 chmod +x az-darwin-amd64
 mv az-darwin-amd64 /usr/local/bin/az
 ```
@@ -23,16 +25,15 @@ mv az-darwin-amd64 /usr/local/bin/az
 ## Linux
 
 ```
-curl -sLO https://github.com/carolynvs/az-cli/releases/download/latest/az-linux-amd64
+curl -sLO https://github.com/carolynvs/az-cli/releases/download/VERSION/az-linux-amd64
 chmod +x az-linux-amd64
 mv az-linux-amd64 /usr/local/bin/az
 ```
 
 ## Dockerfile
-I recommend that you replace `latest` in the URL below with a specific release, e.g. `v0.1.0`.
 
 ```
-RUN curl -sLo /usr/local/bin/az https://github.com/carolynvs/az-cli/releases/download/latest/az-linux-amd64 && \
+RUN curl -sLo /usr/local/bin/az https://github.com/carolynvs/az-cli/releases/download/VERSION/az-linux-amd64 && \
     chmod +x /usr/local/bin/az
 ```
 
@@ -43,7 +44,7 @@ You will need to find a permanent location for it and add it to your PATH.
 
 ```
 mkdir -f ~\bin
-iwr 'https://github.com/carolynvs/az-cli/releases/download/latest/az-windows-amd64.exe' -UseBasicParsing -OutFile ~\bin\az.exe
+iwr 'https://github.com/carolynvs/az-cli/releases/download/VERSION/az-windows-amd64.exe' -UseBasicParsing -OutFile ~\bin\az.exe
 $env:PATH += ";~\bin"
 ```
 
