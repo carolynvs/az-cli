@@ -30,23 +30,35 @@ func (a *App) loadCredentials() error {
 
 	if accountName == "" || accountKey == "" {
 		connString := os.Getenv("AZURE_STORAGE_CONNECTION_STRING")
-
-		keyRegex := regexp.MustCompile("AccountKey=([^;]+);")
-		keyMatch := keyRegex.FindAllStringSubmatch(connString, -1)
-
-		nameRegex := regexp.MustCompile("AccountName=([^;]+);")
-		nameMatch := nameRegex.FindAllStringSubmatch(connString, -1)
-
-		if len(nameMatch) == 0 || len(keyMatch) == 0 {
-			return errors.New("AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_ACCESS_KEY or AZURE_STORAGE_CONNECTION_STRING must be set")
+		if connString == "" {
+			errors.New("AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_ACCESS_KEY or AZURE_STORAGE_CONNECTION_STRING must be set")
 		}
 
-		accountKey = keyMatch[0][1]
-		accountName = nameMatch[0][1]
+		var err error
+		accountName, accountKey, err = parseConnectionString(connString)
+		if err != nil {
+			return err
+		}
 	}
 
 	a.Credential = azblob.NewSharedKeyCredential(accountName, accountKey)
 	a.Pipeline = azblob.NewPipeline(a.Credential, azblob.PipelineOptions{})
 
 	return nil
+}
+
+func parseConnectionString(connString string) (name string, key string, err error) {
+	keyRegex := regexp.MustCompile("AccountKey=([^;]+)")
+	keyMatch := keyRegex.FindAllStringSubmatch(connString, -1)
+
+	nameRegex := regexp.MustCompile("AccountName=([^;]+)")
+	nameMatch := nameRegex.FindAllStringSubmatch(connString, -1)
+
+	if len(nameMatch) == 0 || len(keyMatch) == 0 {
+		return "", "", errors.New("unexpected format for AZURE_STORAGE_CONNECTION_STRING, could not find AccountName=NAME and AccountKey=KEY in it")
+	}
+
+	accountKey := keyMatch[0][1]
+	accountName := nameMatch[0][1]
+	return accountName, accountKey, nil
 }
